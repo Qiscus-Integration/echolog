@@ -51,8 +51,8 @@ func (l *logFields) MarshalZerologObject(e *zerolog.Event) {
 	}
 }
 
-// Middleware contains functionality of request_id, logger and recover for request traceability
-func Middleware(filter func(c echo.Context) bool) echo.MiddlewareFunc {
+// MiddlewareFilterFunc contains functionality of request_id, logger and recover for request traceability
+func MiddlewareFilterFunc(filter func(c echo.Context) bool) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
@@ -141,6 +141,27 @@ func Middleware(filter func(c echo.Context) bool) echo.MiddlewareFunc {
 			return next(c)
 		}
 	}
+}
+
+// Middleware contains functionality to filter Request URI with paramater type of string
+func Middleware(filters ...string) echo.MiddlewareFunc {
+	if len(filters) > 0 {
+		return MiddlewareFilterFunc(func(c echo.Context) bool {
+			return filtered(c, filters)
+		})
+	}
+
+	return MiddlewareFilterFunc(nil)
+}
+
+func filtered(c echo.Context, filters []string) bool {
+	for _, filter := range filters {
+		if c.Request().RequestURI == filter {
+			return true
+		}
+	}
+
+	return false
 }
 
 func formatReqBody(data []byte) string {
