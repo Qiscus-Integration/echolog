@@ -27,16 +27,16 @@ func filter(c echo.Context) bool {
 func main() {
 	e := echo.New()
 	// simple apply middleware without filter
-	e.Use(echolog.Middleware())
+	e.Use(echolog.Default())
 	// with filter
-	e.Use(echolog.Middleware("/healthcheck"))
+	e.Use(echolog.Default("/healthcheck"))
 	// add more filter
-	e.Use(echolog.Middleware("/healthcheck", "foo", "bar"))
+	e.Use(echolog.Default("/healthcheck", "foo", "bar"))
 	
 	// you can also do this
-	e.Use(echolog.MiddlewareFilterFunc(filter))
+	e.Use(echolog.Middleware(filter))
 	// or without filter
-	// e.Use(echolog.MiddlewareFilterFunc(nil))
+	// e.Use(echolog.Middleware(nil))
 	// Output: {"level":"info","request_id":"9627a4a0-9d94-4ab6-844c-9599c0a15cd0","remote_ip":"[::1]:62542","host":"localhost:8080","method":"GET","path":"/","body":"","status_code":200,"latency":0,"tag":"request","time":"2023-02-19T14:07:37+07:00","message":"success"}
 
 	e.GET("/", func(c echo.Context) error {
