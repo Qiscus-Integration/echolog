@@ -143,6 +143,27 @@ func Middleware(filter func(c echo.Context) bool) echo.MiddlewareFunc {
 	}
 }
 
+// Default contains functionality to filter Request URI with paramater type of string
+func Default(filters ...string) echo.MiddlewareFunc {
+	if len(filters) > 0 {
+		return Middleware(func(c echo.Context) bool {
+			return filtered(c, filters)
+		})
+	}
+
+	return Middleware(nil)
+}
+
+func filtered(c echo.Context, filters []string) bool {
+	for _, filter := range filters {
+		if c.Request().RequestURI == filter {
+			return true
+		}
+	}
+
+	return false
+}
+
 func formatReqBody(data []byte) string {
 	var js map[string]interface{}
 	if json.Unmarshal(data, &js) != nil {
