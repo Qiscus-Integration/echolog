@@ -143,8 +143,8 @@ func Middleware(filter func(c echo.Context) bool) echo.MiddlewareFunc {
 	}
 }
 
-// Middleware contains functionality to filter Request URI with paramater type of string
-func Middleware(filters ...string) echo.MiddlewareFunc {
+// Default contains functionality to filter Request URI with paramater type of string
+func Default(filters ...string) echo.MiddlewareFunc {
 	if len(filters) > 0 {
 		return Middleware(func(c echo.Context) bool {
 			return filtered(c, filters)
